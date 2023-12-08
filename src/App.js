@@ -37,6 +37,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [displayLocation, setDisplayLocation] = useState("");
   const [weather, setWeather] = useState({});
+  const [error, setError] = useState('')
 
   // const fetchWeather = async () => {
   //   if (location.length < 2) return setWeather({});
@@ -106,22 +107,24 @@ const App = () => {
             setWeather(weatherData.daily);
           } catch (err) {
             console.error(err);
+            setError(err)
           } finally {
             setIsLoading(false);
           }
         };
+        localStorage.setItem("location", location);
         fetchWeather()
       }
-      localStorage.setItem("location", location);
     },
     [location]
   );
-
+// console.log(error)
   return (
     <div className="app">
       <h1>Classy Weather</h1>
       <Input location={location} onChangeLocation={setMyLocation} />
       {isLoading && <p className="loader">Loading...</p>}
+      {error && !isLoading && location.length >2 && <p className="loader">failed to fetch. Check your network connection</p>}
       {weather.weathercode && (
         <Weather weather={weather} location={displayLocation} />
       )}
